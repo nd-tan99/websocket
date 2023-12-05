@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socket.IO Test</title>
+</head>
+<body>
+  <input type="text" id="messageInput" placeholder="Type your message">
+  <button onclick="sendMessage()">Send</button>
+  <ul id="messages"></ul>
+
+  <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+  <script>
+    const socket = io('http://localhost:3000');
+
+    // Client gửi sự kiện joinChannel khi tham gia vào channel
+    socket.emit('joinChannel', 'myChannel');
+
+    // Lắng nghe sự kiện message từ server trong channel cụ thể
+    socket.on('message', (data) => {
+      console.log(`Received message: ${data}`);
+      addMessage(`Received: ${data}`);
+    });
+
+    function sendMessage() {
+      const messageInput = document.getElementById('messageInput');
+      const message = messageInput.value;
+
+      // Gửi tin nhắn vào channel cụ thể
+      socket.emit('myChannel', message);
+      addMessage(`Sent: ${message}`);
+
+      messageInput.value = '';
+    }
+
+    function addMessage(message) {
+      const messagesList = document.getElementById('messages');
+      const li = document.createElement('li');
+      li.textContent = message;
+      messagesList.appendChild(li);
+    }
+  </script>
+</body>
+</html>
